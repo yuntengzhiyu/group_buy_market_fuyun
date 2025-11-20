@@ -1,0 +1,5 @@
+spring:
+  config:
+    name: group-buy-market-fuyun-app
+  profiles:
+    active: dev
