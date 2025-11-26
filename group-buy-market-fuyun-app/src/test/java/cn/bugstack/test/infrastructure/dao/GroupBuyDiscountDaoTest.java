@@ -23,7 +23,7 @@ public class GroupBuyDiscountDaoTest {
     @Test
     public void test_queryGroupBuyDiscountList(){
         List<GroupBuyDiscount> groupBuyDiscounts = groupBuyDiscountDao.queryGroupBuyDiscountList();
-
+        log.info("测试结果:{}", JSON.toJSONString(groupBuyDiscounts));
     }
 
 }
