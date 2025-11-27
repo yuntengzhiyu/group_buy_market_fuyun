@@ -27,7 +27,8 @@ public class ITagServiceTest {
     private IRedisService redisService;
 
     @Test
-    public void test_tag_job() {
+    public void test_tag_job()
+    {
         tagService.execTagBatchJob("RQ_KJHKL98UU78H66554GFDV", "10001");
     }
 
