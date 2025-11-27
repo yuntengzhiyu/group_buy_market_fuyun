@@ -20,7 +20,6 @@ public class MJCalculateService extends AbstractDiscountCalculateService {
     @Override
     public BigDecimal doCalculate(BigDecimal originalPrice, GroupBuyActivityDiscountVO.GroupBuyDiscount groupBuyDiscount) {
         log.info("优惠策略折扣计算:{}", groupBuyDiscount.getDiscountType().getCode());
-
         // 折扣表达式 - 100,10 满100减10元
         String marketExpr = groupBuyDiscount.getMarketExpr();
         String[] split = marketExpr.split(Constants.SPLIT);
