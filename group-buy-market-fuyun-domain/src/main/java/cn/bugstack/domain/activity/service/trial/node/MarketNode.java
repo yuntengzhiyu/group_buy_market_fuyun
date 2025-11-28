@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.swing.text.html.HTML;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -36,6 +37,9 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
     private EndNode endNode;
     @Resource
     private ErrorNode errorNode;
+    @Resource
+    private TagNode tagNode;
+
     @Resource
     private Map<String, IDiscountCalculateService> discountCalculateServiceMap;
 
@@ -95,7 +99,7 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
         if (null == dynamicContext.getGroupBuyActivityDiscountVO() || null == dynamicContext.getSkuVO() || null == dynamicContext.getDeductionPrice()) {
             return errorNode;
         }
-        return endNode;
+        return tagNode;
     }
 
 }
