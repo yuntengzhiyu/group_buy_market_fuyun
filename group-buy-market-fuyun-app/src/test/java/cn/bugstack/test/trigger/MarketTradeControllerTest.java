@@ -59,4 +59,5 @@ public class MarketTradeControllerTest {
         log.info("测试结果 req:{} res:{}", JSON.toJSONString(lockMarketPayOrderRequestDTO), JSON.toJSONString(lockMarketPayOrderResponseDTOResponse));
     }
 
+
 }
