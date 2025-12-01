@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 
 /**
  * @author Fuzhengwei bugstack.cn @小傅哥
- * @description 结束节点
+ * @description 正常结束节点
  * @create 2024-12-14 14:31
  */
 @Slf4j
@@ -26,11 +26,16 @@ public class EndNode extends AbstractGroupBuyMarketSupport<MarketProductEntity, 
     public TrialBalanceEntity doApply(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
         log.info("拼团商品查询试算服务-EndNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
 
+        // 拼团活动配置
         GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = dynamicContext.getGroupBuyActivityDiscountVO();
+
+        // 商品信息
         SkuVO skuVO = dynamicContext.getSkuVO();
 
-        // 折扣价格
+        // 折扣金额
         BigDecimal deductionPrice = dynamicContext.getDeductionPrice();
+        // 支付金额
+        BigDecimal payPrice = dynamicContext.getPayPrice();
 
         // 返回空结果
         return TrialBalanceEntity.builder()
@@ -38,6 +43,7 @@ public class EndNode extends AbstractGroupBuyMarketSupport<MarketProductEntity, 
                 .goodsName(skuVO.getGoodsName())
                 .originalPrice(skuVO.getOriginalPrice())
                 .deductionPrice(deductionPrice)
+                .payPrice(payPrice)
                 .targetCount(groupBuyActivityDiscountVO.getTarget())
                 .startTime(groupBuyActivityDiscountVO.getStartTime())
                 .endTime(groupBuyActivityDiscountVO.getEndTime())
