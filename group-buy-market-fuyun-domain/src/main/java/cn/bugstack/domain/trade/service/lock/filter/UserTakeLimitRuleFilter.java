@@ -44,4 +44,5 @@ public class UserTakeLimitRuleFilter implements ILogicHandler<TradeLockRuleComma
                 .build();
     }
 
+
 }

@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
           return;
       }
 
+
       const price = this.getAttribute("data-price")
       showPaymentModal(price)
     })
