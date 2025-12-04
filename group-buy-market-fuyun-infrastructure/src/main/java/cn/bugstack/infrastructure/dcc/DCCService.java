@@ -2,8 +2,10 @@ package cn.bugstack.infrastructure.dcc;
 
 import cn.bugstack.types.annotations.DCCValue;
 import cn.bugstack.types.common.Constants;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.sql.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,6 +29,8 @@ public class DCCService {
     @DCCValue("scBlacklist:s02c02")
     private String scBlacklist;
 
+    @DCCValue("cacheSwitch:0")
+    private String cacheOpenSwitch;
 
     public boolean isDowngradeSwitch() {
         return "1".equals(downgradeSwitch);
@@ -55,5 +59,11 @@ public class DCCService {
         return list.contains(source + channel);
     }
 
+    /**
+     * 缓存开启开关，true为开启，1为关闭
+     */
+    public boolean isCacheOpenSwitch(){
+        return "0".equals(cacheOpenSwitch);
+    }
 
 }
