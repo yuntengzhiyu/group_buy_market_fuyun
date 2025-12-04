@@ -24,6 +24,7 @@ public class IIndexGroupBuyMarketServiceTest {
 
     @Resource
     private IIndexGroupBuyMarketService indexGroupBuyMarketService;
+
     /**
      * 测试人群标签功能的时候，可以进入 ITagServiceTest#test_tag_job 执行人群写入
      */
@@ -65,6 +66,5 @@ public class IIndexGroupBuyMarketServiceTest {
         log.info("请求参数:{}", JSON.toJSONString(marketProductEntity));
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
-
 
 }

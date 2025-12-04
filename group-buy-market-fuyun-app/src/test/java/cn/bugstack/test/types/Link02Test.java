@@ -2,7 +2,7 @@ package cn.bugstack.test.types;
 
 import cn.bugstack.test.types.rule02.factory.Rule02TradeRuleFactory;
 import cn.bugstack.test.types.rule02.logic.XxxResponse;
-import cn.bugstack.types.design.framework.link.model2.chain.BusinessLinkedList;
+import cn.bugstack.wrench.design.framework.link.model2.chain.BusinessLinkedList;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class Link02Test {
 
     @Test
     public void test_model02_02() throws Exception {
-        XxxResponse apply = businessLinkedList02.apply("123", new Rule02TradeRuleFactory.DynamicContext());
+        XxxResponse apply = businessLinkedList01.apply("123", new Rule02TradeRuleFactory.DynamicContext());
         log.info("测试结果:{}", JSON.toJSONString(apply));
     }
 
