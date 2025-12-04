@@ -3,6 +3,7 @@ package cn.bugstack.domain.activity.service.trial.node;
 import cn.bugstack.domain.activity.model.entity.MarketProductEntity;
 import cn.bugstack.domain.activity.model.entity.TrialBalanceEntity;
 import cn.bugstack.domain.activity.model.valobj.GroupBuyActivityDiscountVO;
+import cn.bugstack.domain.activity.model.valobj.SCSkuActivityVO;
 import cn.bugstack.domain.activity.model.valobj.SkuVO;
 import cn.bugstack.domain.activity.service.discount.IDiscountCalculateService;
 import cn.bugstack.domain.activity.service.trial.AbstractGroupBuyMarketSupport;
@@ -17,10 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import javax.swing.text.html.HTML;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 /**
  * @author Fuzhengwei bugstack.cn @小傅哥
@@ -33,21 +34,36 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
 
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
+    /**
+     * <a href="https://bugstack.cn/md/road-map/spring-dependency-injection.html">Spring 注入详细说明</a>
+     */
     @Resource
-    private EndNode endNode;
+    private Map<String, IDiscountCalculateService> discountCalculateServiceMap;
     @Resource
     private ErrorNode errorNode;
     @Resource
     private TagNode tagNode;
 
-    @Resource
-    private Map<String, IDiscountCalculateService> discountCalculateServiceMap;
-
-
+    /**
+     * 在 MarketNode2CompletableFuture 继承的子类实现一个 CompletableFuture 多线程方式。
+     * <p>
+     * 1. CompletableFuture：适用于大多数现代 Java 应用，尤其在需要灵活任务编排时。
+     * 2.  FutureTask：任务极度简单，适合简单场景。
+     * <p>
+     * | 对比维度    | FutureTask             | CompletableFuture                |
+     * | :--------------- | :-------------------------- | :------------------------------------- |
+     * | 任务编排能力 | 弱（需手动管理多个 Future） | 强（内置 `thenApply`、`allOf` 等方法） |
+     * | 代码简洁性  | 冗余（显式调用 `get()`）    | 简洁（链式调用，逻辑内聚）             |
+     * | 异常处理   | 繁琐（需捕获多个异常）      | 优雅（支持 `exceptionally` 统一处理）  |
+     * | 线程阻塞     | 可能多次阻塞主线程          | 非阻塞或单次阻塞（如 `join()`）        |
+     * | 适用场景     | 简单任务、低版本 Java 环境  | 复杂异步流程、Java 8+ 环境             |
+     * <p>
+     * 使用；MarketNode 的 @Service 注释掉，MarketNode2CompletableFuture 的 @Service 打开，就可以使用了。
+     */
     @Override
     protected void multiThread(MarketProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws ExecutionException, InterruptedException, TimeoutException {
         // 异步查询活动配置
-        QueryGroupBuyActivityDiscountVOThreadTask queryGroupBuyActivityDiscountVOThreadTask = new QueryGroupBuyActivityDiscountVOThreadTask(requestParameter.getActivityId(),requestParameter.getSource(), requestParameter.getChannel(), requestParameter.getGoodsId(), repository);
+        QueryGroupBuyActivityDiscountVOThreadTask queryGroupBuyActivityDiscountVOThreadTask = new QueryGroupBuyActivityDiscountVOThreadTask(requestParameter.getActivityId(), requestParameter.getSource(), requestParameter.getChannel(), requestParameter.getGoodsId(), repository);
         FutureTask<GroupBuyActivityDiscountVO> groupBuyActivityDiscountVOFutureTask = new FutureTask<>(queryGroupBuyActivityDiscountVOThreadTask);
         threadPoolExecutor.execute(groupBuyActivityDiscountVOFutureTask);
 
@@ -79,7 +95,7 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
             return router(requestParameter, dynamicContext);
         }
 
-        //优惠试算
+        // 优惠试算
         IDiscountCalculateService discountCalculateService = discountCalculateServiceMap.get(groupBuyDiscount.getMarketPlan());
         if (null == discountCalculateService) {
             log.info("不存在{}类型的折扣计算服务，支持类型为:{}", groupBuyDiscount.getMarketPlan(), JSON.toJSONString(discountCalculateServiceMap.keySet()));
@@ -100,6 +116,7 @@ public class MarketNode extends AbstractGroupBuyMarketSupport<MarketProductEntit
         if (null == dynamicContext.getGroupBuyActivityDiscountVO() || null == dynamicContext.getSkuVO() || null == dynamicContext.getDeductionPrice()) {
             return errorNode;
         }
+
         return tagNode;
     }
 
